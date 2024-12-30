@@ -1,36 +1,74 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Oral Cancer Detection Project
 
-## Getting Started
+This project aims to provide early detection of oral cancer using a machine learning model built with TensorFlow's MobileNetV2 architecture and trained on a custom dataset of oral cancer images. Users can upload images via a responsive web interface built using Next.js and Tailwind CSS, with Flask and Python managing the backend for image processing and prediction.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Key Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **Responsive Web Interface**: Built using **Next.js** and styled with **Tailwind CSS**, ensuring seamless usage across devices.
+- **Backend in Flask**: Flask serves as the backend for handling image uploads and managing communication with the ML model.
+- **MobileNetV2-based Model**: A fine-tuned version of MobileNetV2 from ImageNet, designed for efficient image classification tasks.
+- **Custom Dataset**: The model was trained on a dataset of oral cancer images with augmentation to ensure robust predictions.
+- **High Accuracy**: The model achieves over **95% accuracy** in detecting oral cancer from uploaded images.
+- **Real-time Predictions**: Users can upload images and receive instant diagnoses (Benign or Cancer) along with confidence scores.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Machine Learning Model Details
 
-## Learn More
+The ML model for detecting oral cancer was implemented as follows:
 
-To learn more about Next.js, take a look at the following resources:
+1. **Architecture**:
+    - Used **MobileNetV2** pretrained on ImageNet as the base model.
+    - Added custom layers:
+        - Global Average Pooling.
+        - Fully Connected Dense Layer (128 neurons with ReLU activation).
+        - Dropout Layer (to prevent overfitting).
+        - Output Layer with a sigmoid activation for binary classification.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+2. **Training**:
+    - Dataset divided into 80% training and 20% validation using `image_dataset_from_directory`.
+    - Data augmentation applied to improve generalization.
+    - Binary cross-entropy loss function used.
+    - Optimized with Adam optimizer (learning rate: 0.0001).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+3. **Class Balancing**:
+    - Class weights computed to handle any imbalance in the dataset between benign and cancerous cases.
 
-## Deploy on Vercel
+4. **Callbacks**:
+    - Early stopping to halt training if validation loss does not improve.
+    - Model checkpointing to save the best model during training.
+    - Learning rate reduction on plateau.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+5. **Performance**:
+    - Achieved **95% accuracy** with low validation loss on the test set.
+    - Model visualized with accuracy and loss plots over training epochs.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+6. **Saved Model**:
+    - The best-performing model was saved as `final_mobilenet_model.keras`.
+
+---
+
+## Technologies Used
+
+### Frontend
+- **Next.js**: For creating a dynamic and efficient user interface.
+- **Tailwind CSS**: For responsive and visually appealing designs.
+
+### Backend
+- **Flask**: For handling image upload and serving the prediction API.
+- **TensorFlow**: For training and deploying the ML model.
+
+### Dataset
+The dataset was organized into labeled directories for "Cancer" and "Benign" cases. Images were augmented to create a robust training set.
+
+---
+
+## Usage
+
+### 1. Run the Backend
+- Ensure the `final_mobilenet_model.keras` file is present in the backend directory.
+- Start the Flask server:
+  ```bash
+  python prediction.py
